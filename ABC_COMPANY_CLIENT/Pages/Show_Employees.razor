@@ -1,0 +1,80 @@
+﻿@page "/show/employee"
+@using ABC_COMPANY_CLIENT.Modal
+<PageTitle>Employee</PageTitle>
+<h3 class="text-center link-underline mb-5">Show Employees</h3>
+
+
+
+
+@if (employee_Datas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Serial No.</th>
+                        <th scope="col">Employee Id</th>
+                        <th scope="col">Employee Name</th>
+                        <th scope="col">Employee Age</th>
+                        <th scope="col">Employee Gender</th>
+                        <th scope="col">Employee Address</th>
+                        <th scope="col">Employee Department</th>
+                        <th scope="col">Employee Joining Year</th>
+                        <th scope="col">Employee Salary</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int serial = 1;
+                    }
+                    @foreach (var s in employee_Datas)
+                    {
+                        <tr>
+                            <th scope="row">@(serial++)</th>
+                            <td>@s.employee_Id</td>
+                            <td>@s.employee_Name</td>
+                            <td>@s.employee_Age</td>
+                            <td>@s.employee_Gender</td>
+                            <td>@s.employee_Address</td>
+                            <td>@s.employee_Department</td>
+                            <td>@s.employee_Joining_Year</td>
+                            <td>@s.employee_Salary</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning me-2" @onclick="@(() => Nav.NavigateTo($"updateemployee/{s.employee_Id}"))">Edit</button>
+                                <button class="btn btn-sm btn-danger" @onclick="@(() => DeleteStudent(s.employee_Id))">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <button type="submit" @onclick="@addition" class="btn btn-primary">Create</button>
+}
+
+
+
+@code {
+    public List<Employee_Data> employee_Datas { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        employee_Datas = await httpClient.GetFromJsonAsync<List<Employee_Data>>("https://localhost:7268/employee");
+    }
+    private void addition()
+    {
+        Nav.NavigateTo("/addemployee", true);
+    }
+
+    private async Task DeleteStudent(int employee_Id)
+    {
+        await httpClient.DeleteAsync("https://localhost:7268/employee/" + employee_Id);
+        Nav.NavigateTo("/show/employee", true);
+    }
+}

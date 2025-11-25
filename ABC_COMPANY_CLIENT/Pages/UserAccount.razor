@@ -1,0 +1,37 @@
+﻿@page "/account"
+@using ABC_COMPANY_CLIENT.Modal
+<PageTitle>Account Details</PageTitle>
+
+
+<div class="container">
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">UserId</th>
+                    <th scope="col">Password</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in use)
+                {
+                    <tr>
+                        <td>@s.userId</td>
+                        <td>@s.password</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+@code {
+    private List<Management_Data> use = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        use = await httpClient.GetFromJsonAsync<List<Management_Data>>("https://localhost:7268/user");
+    }
+}

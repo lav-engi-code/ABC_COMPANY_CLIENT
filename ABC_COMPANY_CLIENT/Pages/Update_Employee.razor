@@ -1,0 +1,87 @@
+﻿@page "/updateemployee/{id:int}"
+@using ABC_COMPANY_CLIENT.Modal
+<PageTitle>Update Employee</PageTitle>
+<h3>Update_Employee</h3>
+
+
+<div class="card p-3 mb-4 shadow">
+    <EditForm Model="employee_" OnValidSubmit="UpdateStudentMethod" FormName="UpdateStudentForm">
+        <div class="mb-3">
+            <label class="form-label">Employee ID</label>
+            <InputNumber class="form-control" @bind-value="employee_.employee_Id" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Employee Name</label>
+            <InputText class="form-control" @bind-value="employee_.employee_Name" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Employee Age</label>
+            <InputNumber class="form-control" @bind-value="employee_.employee_Age" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Employee Gender</label>
+            <InputText class="form-control" @bind-value="employee_.employee_Gender" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Employee Address</label>
+            <InputText class="form-control" @bind-value="employee_.employee_Address" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Employee Joining Year</label>
+            <InputNumber class="form-control" @bind-value="employee_.employee_Joining_Year" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Employee Department</label>
+            <InputText class="form-control" @bind-value="employee_.employee_Department" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Employee Salary</label>
+            <InputNumber class="form-control" @bind-value="employee_.employee_Salary" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </EditForm>
+</div>
+
+
+
+@* 
+<div class="card p-3 mb-4 shadow">
+    <h5>Add New Student</h5>
+    <EditForm Model="datas" OnValidSubmit="UpdateStudentMethod">
+        <div class="mb-3">
+            <label class="form-label">ID</label>
+            <InputNumber class="form-control" @bind-value="datas!.StudentId" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <InputText class="form-control" @bind-value="datas!.Name" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Class</label>
+            <InputText class="form-control" @bind-value="datas!.Class" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Address</label>
+            <InputText class="form-control" @bind-value="datas!.Address" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </EditForm>
+</div> *@
+
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    Employee_Data employee_ = new();
+    protected override async Task OnInitializedAsync()
+    {
+        employee_ = await httpClient.GetFromJsonAsync<Employee_Data>($"/employee/{id}");
+    }
+    private void UpdateStudentMethod()
+    {
+        httpClient.PutAsJsonAsync<Employee_Data>("/employee", employee_);
+        Nav.NavigateTo("/show/employee", true);
+    }
+}

@@ -1,0 +1,21 @@
+﻿@using ABC_COMPANY_CLIENT.Modal
+
+
+
+<div>
+    @foreach (var s in use)
+    {
+        <a href="/account">@s.userId</a>
+    }
+</div>
+
+
+@code {
+    private List<Management_Data> use = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        use = await httpClient.GetFromJsonAsync<List<Management_Data>>("https://localhost:7268/user");
+    }
+}
+

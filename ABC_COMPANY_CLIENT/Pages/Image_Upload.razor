@@ -1,0 +1,94 @@
+﻿@page "/image"
+@inject IToastService toastService
+
+<PageTitle>Image</PageTitle>
+
+<h3>Image_Upload</h3>
+
+@using ABC_COMPANY_CLIENT.Modal
+@using System.Net
+@using Blazored.Toast.Services
+
+
+<div style="margin-bottom:20px ; display: flex" class="row mb-3">
+    <div style="font:700">Select Your File  : :   </div>
+    <div><InputFile OnChange="OnFileSelected" accept=".jpg,.png,.pdf" /></div>
+    <div style="color :red">File Should Be jpg , png , pdf & Under 10Mb Only</div>
+</div>
+
+<div class="mb-3">
+    <div>File Name : @FileName</div>
+    <div>File Size : @FileSize bytes</div>
+    <div>File Type : @FileType</div>
+</div>
+<img src="data:@FileType;base64,@base644" style="max-width:400px; border:1px solid #ccc; padding:5px;" />
+
+<button class="btn btn-primary mb-3" @onclick="UploadSelectedFile" disabled="@(!IsFileSelected)">
+    Upload
+</button>
+
+
+<p class="mb-3">@message</p>
+
+
+
+
+@code {
+    private IBrowserFile? selectedFile;
+    public string? FileName { get; set; }
+    public long FileSize { get; set; }
+    public string? FileType { get; set; }
+    private bool IsFileSelected => selectedFile != null;
+    string? message;
+    string? base644 { get; set; }
+
+    int maxfilesize = 1024 * 1024 * 10;
+
+    private void OnFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+        FileSize = selectedFile.Size;
+        FileName = selectedFile.Name;
+        FileType = selectedFile.ContentType;
+    }
+
+    public async Task UploadSelectedFile()
+    {
+        if (selectedFile == null)
+        {
+            message = "Please select a file first!";
+            return;
+        }
+        if (selectedFile.Size > maxfilesize)
+        {
+            message = "Selected File is Bigger Than Limit";
+            return;
+        }
+        else
+        {
+            var ms = new MemoryStream();
+            await selectedFile.OpenReadStream().CopyToAsync(ms);
+            byte[] FileData = ms.ToArray();
+            base644 = Convert.ToBase64String(FileData);
+
+
+            var ffile = new File64Data
+            {
+                FileName = selectedFile.Name,
+                FileType = selectedFile.ContentType,
+                File64base = base644
+            };
+
+            var response = await httpClient.PostAsJsonAsync("https://localhost:7268/fileupload", ffile);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                message = "File uploaded successfully!";
+            }
+            else
+            {
+                message = "Upload failed";
+            }
+        }
+    }
+}
